@@ -5,7 +5,7 @@ p2p-endpoint = 0.0.0.0:2101
 p2p-max-connections = 200
 
 # Shared file size
-shared-file-size = 16G
+shared-file-size = 32G
 shared-file-dir = /shm/
 
 # A 2-precision percentage (0-10000) that defines the threshold for when to 
@@ -53,7 +53,8 @@ webserver-ws-endpoint = 0.0.0.0:8190
 # api-user =
 
 # Plugin(s) to enable, may be specified multiple times
-plugin = witness condenser_api network_broadcast_api account_by_key database_api
+plugin = witness network_broadcast_api account_by_key database_api
+# additional: follow tags account_history market_history mongo_db
 
 # Defines a range of accounts to track as a json pair ["from","to"] [from,to)
 # track-account-range =
