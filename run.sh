@@ -8,10 +8,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 : ${DOCKER_DIR="$DIR/dkr"}
 : ${FULL_DOCKER_DIR="$DIR/dkr_fullnode"}
 : ${DATADIR="$DIR/data"}
-: ${DOCKER_NAME="seed"}
+: ${DOCKER_NAME="golos-seed"}
 
 # the tag to use when running/replaying steemd
-: ${DOCKER_IMAGE="steem"}
+: ${DOCKER_IMAGE="golos"}
 
 
 # HTTP or HTTPS url to grab the blockchain from. Set compression in BC_HTTP_CMP
@@ -35,8 +35,8 @@ MAGENTA="$(tput setaf 5)"
 CYAN="$(tput setaf 6)"
 WHITE="$(tput setaf 7)"
 RESET="$(tput sgr0)"
-: ${DK_TAG="someguy123/steem:latest"}
-: ${DK_TAG_FULL="someguy123/steem:latest-full"}
+: ${DK_TAG="someguy123/golos:latest"}
+: ${DK_TAG_FULL="someguy123/golos:latest-full"}
 : ${SHM_DIR="/dev/shm"}
 : ${REMOTE_WS="wss://steemd.privex.io"}
 # Amount of time in seconds to allow the docker container to stop before killing it.
@@ -204,7 +204,7 @@ optimize() {
 
 parse_build_args() {
     BUILD_VER=$1
-    CUST_TAG="steem:$BUILD_VER"
+    CUST_TAG="golos:$BUILD_VER"
     if (( $BUILD_FULL == 1 )); then
         CUST_TAG+="-full"
     fi
@@ -235,13 +235,13 @@ parse_build_args() {
 # e.g. build v0.20.6
 #
 # Override destination tag:
-#   ./run.sh build v0.21.0 tag 'steem:latest'
+#   ./run.sh build v0.21.0 tag 'golos:latest'
 #
 # Additional build args:
 #   ./run.sh build v0.21.0 ENABLE_MIRA=OFF
 #
 # Or combine both:
-#   ./run.sh build v0.21.0 tag 'steem:mira' ENABLE_MIRA=ON
+#   ./run.sh build v0.21.0 tag 'golos:mira' ENABLE_MIRA=ON
 #
 build() {
     fmm="Low Memory Mode (For Seed / Witness nodes)"
@@ -261,13 +261,13 @@ build() {
         For your safety, we've tagged this image as $CUST_TAG
         To use it in this steem-docker, run: 
         ${GREEN}${BOLD}
-        docker tag $CUST_TAG steem:latest
+        docker tag $CUST_TAG golos:latest
         ${RESET}${RED}
     !!! !!! !!! !!! !!! !!! READ THIS !!! !!! !!! !!! !!! !!!
     !!! !!! !!! !!! !!! !!! READ THIS !!! !!! !!! !!! !!! !!!
         ${RESET}
             "
-            msg bold green " +++ Successfully built steemd"
+            msg bold green " +++ Successfully built golosd"
             msg green " +++ Steem node type: ${BOLD}${fmm}"
             msg green " +++ Version/Branch: ${BOLD}${BUILD_VER}"
             msg green " +++ Build args: ${BOLD}${BUILD_ARGS[@]}"
@@ -283,7 +283,7 @@ build() {
     docker build -t "$DOCKER_IMAGE" .
     ret=$?
     if (( $ret == 0 )); then
-        msg bold green " +++ Successfully built current stable steemd"
+        msg bold green " +++ Successfully built current stable golosd"
         msg green " +++ Steem node type: ${BOLD}${fmm}"
         msg green " +++ Docker tag: ${DOCKER_IMAGE}"
     else
@@ -499,7 +499,7 @@ install_docker() {
 #         format: user/repo:version    or   user/repo   (uses the 'latest' tag)
 #
 # If no tag specified, it will download the pre-set $DK_TAG in run.sh or .env
-# Default tag is normally someguy123/steem:latest (official builds by the creator of steem-docker).
+# Default tag is normally someguy123/golos:latest (official builds by the creator of steem-docker).
 #
 install() {
     if (( $# == 1 )); then
@@ -509,7 +509,7 @@ install() {
         if grep -qv ':' <<< "$1"; then
             if grep -qv '/' <<< "$1"; then
                 msg bold red "WARNING: Neither / nor : were present in your tag '$1'"
-                DK_TAG="someguy123/steem:$1"
+                DK_TAG="someguy123/golos:$1"
                 msg red "We're assuming you've entered a version, and will try to install @someguy123's image: '${DK_TAG}'"
                 msg yellow "If you *really* specifically want '$1' from Docker hub, set DK_TAG='$1' inside of .env and run './run.sh install'"
             fi
@@ -519,20 +519,20 @@ install() {
     sleep 2
     msg yellow " -> Loading image from ${DK_TAG}"
     docker pull "$DK_TAG"
-    msg green " -> Tagging as steem"
-    docker tag "$DK_TAG" steem
+    msg green " -> Tagging as golos"
+    docker tag "$DK_TAG" golos
     msg bold green " -> Installation completed. You may now configure or run the server"
 }
 
 # Usage: ./run.sh install_full
 # Downloads the Steem full node image from the pre-set $DK_TAG_FULL in run.sh or .env
-# Default tag is normally someguy123/steem:latest-full (official builds by the creator of steem-docker).
+# Default tag is normally someguy123/golos:latest-full (official builds by the creator of steem-docker).
 #
 install_full() {
     msg yellow " -> Loading image from ${DK_TAG_FULL}"
     docker pull "$DK_TAG_FULL" 
-    msg green " -> Tagging as steem"
-    docker tag "$DK_TAG_FULL" steem
+    msg green " -> Tagging as golos"
+    docker tag "$DK_TAG_FULL" golos
     msg bold green " -> Installation completed. You may now configure or run the server"
 }
 
@@ -572,7 +572,7 @@ start() {
     if [[ $? == 0 ]]; then
         docker start $DOCKER_NAME
     else
-        docker run ${DPORTS[@]} -v "$SHM_DIR":/shm -v "$DATADIR":/steem -d --name $DOCKER_NAME -t "$DOCKER_IMAGE" steemd --data-dir=/steem/witness_node_data_dir
+        docker run ${DPORTS[@]} -v "$SHM_DIR":/shm -v "$DATADIR":/steem -d --name $DOCKER_NAME -t "$DOCKER_IMAGE" golosd --data-dir=/steem/witness_node_data_dir
     fi
 }
 
@@ -599,7 +599,7 @@ replay() {
     msg yellow " -> Removing old container '${DOCKER_NAME}'"
     docker rm $DOCKER_NAME
     msg green " -> Running steem (image: ${DOCKER_IMAGE}) with replay in container '${DOCKER_NAME}'..."
-    docker run ${DPORTS[@]} -v "$SHM_DIR":/shm -v "$DATADIR":/steem -d --name $DOCKER_NAME -t "$DOCKER_IMAGE" steemd --data-dir=/steem/witness_node_data_dir --replay
+    docker run ${DPORTS[@]} -v "$SHM_DIR":/shm -v "$DATADIR":/steem -d --name $DOCKER_NAME -t "$DOCKER_IMAGE" golosd --data-dir=/steem/witness_node_data_dir --replay
     msg bold green " -> Started."
 }
 
@@ -622,7 +622,7 @@ memory_replay() {
     echo "Removing old container"
     docker rm $DOCKER_NAME
     echo "Running steem with --memory-replay..."
-    docker run ${DPORTS[@]} -v "$SHM_DIR":/shm -v "$DATADIR":/steem -d --name $DOCKER_NAME -t "$DOCKER_IMAGE" steemd --data-dir=/steem/witness_node_data_dir --replay --memory-replay
+    docker run ${DPORTS[@]} -v "$SHM_DIR":/shm -v "$DATADIR":/steem -d --name $DOCKER_NAME -t "$DOCKER_IMAGE" golosd --data-dir=/steem/witness_node_data_dir --replay --memory-replay
     echo "Started."
 }
 
@@ -888,9 +888,9 @@ ver() {
     ####
     echo "${BLUE}Steem image installed:${RESET}"
     # Pretty printed docker image ID + creation date
-    dkimg_output=$(docker images -f "reference=steem:latest" --format "Tag: {{.Repository}}, Image ID: {{.ID}}, Created At: {{.CreatedSince}}")
+    dkimg_output=$(docker images -f "reference=golos:latest" --format "Tag: {{.Repository}}, Image ID: {{.ID}}, Created At: {{.CreatedSince}}")
     # Just the image ID
-    dkimg_id=$(docker images -f "reference=steem:latest" --format "{{.ID}}")
+    dkimg_id=$(docker images -f "reference=golos:latest" --format "{{.ID}}")
     # Used later on, for commands that depend on the image existing
     got_dkimg=0
     if [[ $(wc -c <<< "$dkimg_output") -lt 10 ]]; then
@@ -934,10 +934,10 @@ ver() {
         # If the docker image check was successful earlier, then compare the image to the current container 
         if [[ "$got_dkimg" == 1 ]]; then
             if [[ "$container_image_id" == "$dkimg_id" ]]; then
-                echo "    ${GREEN}Container $DOCKER_NAME is running image $container_image_id, which matches steem:latest ($dkimg_id)"
+                echo "    ${GREEN}Container $DOCKER_NAME is running image $container_image_id, which matches golos:latest ($dkimg_id)"
                 echo "    Your container will not change Steem version on restart${RESET}"
             else
-                echo "    ${YELLOW}Warning: Container $DOCKER_NAME is running image $container_image_id, which DOES NOT MATCH steem:latest ($dkimg_id)"
+                echo "    ${YELLOW}Warning: Container $DOCKER_NAME is running image $container_image_id, which DOES NOT MATCH golos:latest ($dkimg_id)"
                 echo "    Your container may change Steem version on restart${RESET}"
             fi
         else

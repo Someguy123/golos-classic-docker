@@ -21,7 +21,7 @@ RUN pip3 install jinja2
 #
 ###
 
-ARG steemd_version=stable
+ARG steemd_version=master
 ENV steemd_version ${steemd_version}
 
 ARG STEEM_STATIC_BUILD=ON
@@ -40,7 +40,7 @@ ARG SKIP_BY_TX_ID=ON
 ENV SKIP_BY_TX_ID ${SKIP_BY_TX_ID}
 
 RUN cd ~ && \
-	git clone https://github.com/steemit/steem.git && \
+	git clone https://github.com/golos-classic/golos.git && \
 	cd steem && \
 	git checkout ${steemd_version} && \
 	git submodule update --init --recursive && \
@@ -48,6 +48,7 @@ RUN cd ~ && \
 	cmake -DCMAKE_BUILD_TYPE=Release . \
             -DLOW_MEMORY_NODE=${LOW_MEMORY_MODE} \
             -DCLEAR_VOTES=${CLEAR_VOTES} \
+            -DBUILD_GOLOS_TESTNET=FALSE \
             -DSTEEM_STATIC_BUILD=${STEEM_STATIC_BUILD} \
             -DSKIP_BY_TX_ID=${SKIP_BY_TX_ID} \
             -DENABLE_MIRA=${ENABLE_MIRA} && \
@@ -62,12 +63,12 @@ EXPOSE 5000
 EXPOSE 8090
 EXPOSE 8091
 
-ARG STEEMD_BIN="/usr/local/bin/steemd"
+ARG STEEMD_BIN="/usr/local/bin/golosd"
 ENV STEEMD_BIN ${STEEMD_BIN}
 
 RUN echo "This container has been built with the following options:" >> /steem_build.txt && \
-    echo "----\nsteemit/steem version/commit: ${steemd_version}\n----" >> /steem_build.txt && \
-    echo "Default steemd executable: ${STEEMD_BIN}\n----" >> /steem_build.txt && \
+    echo "----\ngolos-classic/golos version/commit: ${steemd_version}\n----" >> /steem_build.txt && \
+    echo "Default golosd executable: ${STEEMD_BIN}\n----" >> /steem_build.txt && \
     echo "LOW_MEMORY_MODE=${LOW_MEMORY_MODE}\nSTEEM_STATIC_BUILD=${STEEM_STATIC_BUILD}" >> /steem_build.txt && \
     echo "SKIP_BY_TX_ID=${SKIP_BY_TX_ID}\nENABLE_MIRA=${ENABLE_MIRA}\nCLEAR_VOTES=${CLEAR_VOTES}" >> /steem_build.txt && \
     echo "----\nBuilt at: $(date)\n----" >> /steem_build.txt
