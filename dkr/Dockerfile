@@ -41,10 +41,10 @@ ENV SKIP_BY_TX_ID ${SKIP_BY_TX_ID}
 
 RUN cd ~ && \
 	git clone https://github.com/golos-classic/golos.git && \
-	cd steem && \
+	cd golos && \
 	git checkout ${steemd_version} && \
 	git submodule update --init --recursive && \
-        cd ~/steem && \
+        cd ~/golos && \
 	cmake -DCMAKE_BUILD_TYPE=Release . \
             -DLOW_MEMORY_NODE=${LOW_MEMORY_MODE} \
             -DCLEAR_VOTES=${CLEAR_VOTES} \
@@ -52,7 +52,7 @@ RUN cd ~ && \
             -DSTEEM_STATIC_BUILD=${STEEM_STATIC_BUILD} \
             -DSKIP_BY_TX_ID=${SKIP_BY_TX_ID} \
             -DENABLE_MIRA=${ENABLE_MIRA} && \
-	make -j$(nproc) && make install && rm -rf ~/steem
+	make -j$(nproc) && make install && rm -rf ~/golos
 VOLUME /steem
 WORKDIR /steem
 
