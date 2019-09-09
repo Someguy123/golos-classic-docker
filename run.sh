@@ -599,7 +599,7 @@ replay() {
     msg yellow " -> Removing old container '${DOCKER_NAME}'"
     docker rm $DOCKER_NAME
     msg green " -> Running steem (image: ${DOCKER_IMAGE}) with replay in container '${DOCKER_NAME}'..."
-    docker run ${DPORTS[@]} -v "$SHM_DIR":/shm -v "$DATADIR":/steem -d --name $DOCKER_NAME -t "$DOCKER_IMAGE" golosd --data-dir=/steem/witness_node_data_dir --replay
+    docker run ${DPORTS[@]} -v "$SHM_DIR":/shm -v "$DATADIR":/steem -d --name $DOCKER_NAME -t "$DOCKER_IMAGE" golosd --data-dir=/steem/witness_node_data_dir --replay-blockchain
     msg bold green " -> Started."
 }
 
