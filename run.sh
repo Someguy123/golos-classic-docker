@@ -35,8 +35,8 @@ MAGENTA="$(tput setaf 5)"
 CYAN="$(tput setaf 6)"
 WHITE="$(tput setaf 7)"
 RESET="$(tput sgr0)"
-: ${DK_TAG="someguy123/golos:latest"}
-: ${DK_TAG_FULL="someguy123/golos:latest-full"}
+: ${DK_TAG="someguy123/golosclassic:latest"}
+: ${DK_TAG_FULL="someguy123/golosclassic:latest-full"}
 : ${SHM_DIR="/dev/shm"}
 : ${REMOTE_WS="wss://steemd.privex.io"}
 # Amount of time in seconds to allow the docker container to stop before killing it.
@@ -509,7 +509,7 @@ install() {
         if grep -qv ':' <<< "$1"; then
             if grep -qv '/' <<< "$1"; then
                 msg bold red "WARNING: Neither / nor : were present in your tag '$1'"
-                DK_TAG="someguy123/golos:$1"
+                DK_TAG="someguy123/golosclassic:$1"
                 msg red "We're assuming you've entered a version, and will try to install @someguy123's image: '${DK_TAG}'"
                 msg yellow "If you *really* specifically want '$1' from Docker hub, set DK_TAG='$1' inside of .env and run './run.sh install'"
             fi
@@ -1104,13 +1104,13 @@ publish() {
 
     V="$2"
 
-    MAIN_TAG="someguy123/steem:$V"
+    MAIN_TAG="someguy123/golosclassic:$V"
     [[ "$MKMIRA" == "mira" ]] && SECTAG="latest-mira" || SECTAG="latest"
     (( $# > 2 )) && SECTAG="$3"
     if [[ "$SECTAG" == "n/a" ]]; then
         msg bold yellow  " >> Will build tag $V as tags $MAIN_TAG (no second tag)"
     else
-        SECOND_TAG="someguy123/steem:$SECTAG"
+        SECOND_TAG="someguy123/golosclassic:$SECTAG"
         msg bold yellow " >> Will build tag $V as tags $MAIN_TAG and $SECOND_TAG"
     fi
     sleep 5
