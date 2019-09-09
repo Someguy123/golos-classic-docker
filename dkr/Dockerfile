@@ -1,5 +1,5 @@
 
-FROM ubuntu:bionic
+FROM ubuntu:xenial
 
 # cd ~/dkr && docker build -t steem .
 # docker run -p 0.0.0.0:2001:2001 -v $PWD/data:/steem -d -t steem
