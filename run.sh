@@ -15,7 +15,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
 # HTTP or HTTPS url to grab the blockchain from. Set compression in BC_HTTP_CMP
-: ${BC_HTTP="http://files.privex.io/steem/block_log.lz4"}
+: ${BC_HTTP="http://files.privex.io/blockchains/golosclassic/block_log.lz4"}
 
 # Compression type, can be "xz", "lz4", or "no" (for no compression)
 # Uses on-the-fly de-compression while downloading, to conserve disk space
@@ -24,7 +24,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Anonymous rsync daemon URL to the raw block_log, for repairing/resuming
 # a damaged/incomplete block_log. Set to "no" to disable rsync when resuming.
-: ${BC_RSYNC="rsync://files.privex.io/steem/block_log"}
+: ${BC_RSYNC="rsync://files.privex.io/blockchains/golosclassic/block_log"}
 
 BOLD="$(tput bold)"
 RED="$(tput setaf 1)"
